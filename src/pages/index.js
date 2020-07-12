@@ -1,22 +1,53 @@
-import React from "react"
-import { Link } from "gatsby"
+import React, { useState, useEffect } from "react"
+import { Helmet } from "react-helmet"
+import axios from "axios"
+import Header from "../components/ui/Header"
+import CharacterGrid from "../components/characters/CharacterGrid"
+import Search from "../components/ui/Search"
+import "./App.css"
 
-import Layout from "../components/layout"
-import Image from "../components/image"
-import SEO from "../components/seo"
+const IndexPage = () => {
+  const [items, setItems] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [query, setQuery] = useState("")
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
+  useEffect(() => {
+    const fetchItems = async () => {
+      setIsLoading(true)
+      const result = await axios(
+        `https://www.breakingbadapi.com/api/characters?name=${query}`
+      )
+
+      setItems(result.data)
+      setIsLoading(false)
+    }
+
+    fetchItems()
+  }, [query])
+
+  return (
+    <div className="container">
+      <Helmet
+        htmlAttributes={{
+          lang: "en",
+        }}
+        title="Breaking Bad Cast"
+        meta={[
+          {
+            name: `description`,
+            content: "Breaking Bad Api Example Site Created With Gatsby And Bootstrapped With ReactJs.",
+          },
+          {
+            name: `author`,
+            content: "Omar Farooq Shah"
+          }
+        ]}
+      />
+      <Header />
+      <Search getQuery={q => setQuery(q)} />
+      <CharacterGrid isLoading={isLoading} items={items} />
     </div>
-    <Link to="/page-2/">Go to page 2</Link> <br />
-    <Link to="/using-typescript/">Go to "Using TypeScript"</Link>
-  </Layout>
-)
+  )
+}
 
 export default IndexPage

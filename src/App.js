@@ -28,6 +28,7 @@ const App = () => {
 
   return (
     <div className='container'>
+      <SEO title="Breaking Bad Cast" />
       <Header />
       <Search getQuery={(q) => setQuery(q)} />
       <CharacterGrid isLoading={isLoading} items={items} />
